@@ -14,8 +14,8 @@ const SkillsDropDown = ({ skills }) => {
     allSkills.find((skill) => skill.name === skillsDropdownNames[0])
   );
   const [
-    isChooseCharacterSkillSuccessfully,
-    setIsChooseCharacterSkillSuccessfully
+    isCharacterSkillful,
+    setIsCharacterSkillful
   ] = React.useState(false);
   const [computedNumber, setComputedNumber] = React.useState(0);
 
@@ -34,13 +34,14 @@ const SkillsDropDown = ({ skills }) => {
     setSelectedSkill(skill);
   }, [allSkills]);
 
+
   const handleRoll = () => {
     const randomNumber = Math.floor(Math.random() * 20) + 1;
     setRandomNumber(randomNumber);
     const doesMeetSelectionCriteria =
       randomNumber + selectedSkill.value >= difficultyChosen;
     setComputedNumber(randomNumber + selectedSkill.value);
-    setIsChooseCharacterSkillSuccessfully(doesMeetSelectionCriteria);
+    setIsCharacterSkillful(doesMeetSelectionCriteria);
   };
 
   const handleSkillSelection = (e) => {
@@ -74,7 +75,7 @@ const SkillsDropDown = ({ skills }) => {
         ))}
       </select>
       <input
-        type={'text'}
+        type='text'
         value={difficultyChosen}
         onChange={(e) => handleDifficultyChosenInputChange(e)}
       />
@@ -94,7 +95,7 @@ const SkillsDropDown = ({ skills }) => {
           </div>
         ) : null}
 
-        {isChooseCharacterSkillSuccessfully ? (
+        {isCharacterSkillful ? (
           <h3>skill check is successful </h3>
         ) : (
           <h3>skill check is a failure </h3>
