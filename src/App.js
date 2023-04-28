@@ -4,6 +4,7 @@ import { useImmer } from "use-immer";
 import "./App.css";
 import Character from "./components/Character";
 import { API_URL, ATTRIBUTE_LIST, SKILL_LIST } from "./consts";
+import SkillsDropDown from "./components/SkillsDropDown";
 
 function App() {
     const [characters, updateCharacters] = useImmer([]);
@@ -67,6 +68,8 @@ function App() {
             </header>
             <section className="App-section">
                 {characters.map((character, index) => (
+                <>
+                    <SkillsDropDown skills={character.skills}/>
                     <Character
                         key={index}
                         index={index + 1}
@@ -76,6 +79,7 @@ function App() {
                         }
                         skills={character.skills}
                     />
+                </>
                 ))}
                 <div style={{ margin: "20px 0px 100px 0px" }}>
                     <button
