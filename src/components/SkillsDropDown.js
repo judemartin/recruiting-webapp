@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { SKILL_LIST } from '../consts';
 
 const SkillsDropDown = ({ skills }) => {
@@ -7,12 +7,15 @@ const SkillsDropDown = ({ skills }) => {
   const [randomNumber, setRandomNumber] = React.useState(0);
 
   const [allSkills, setAllSkills] = useState(skills);
-  const [skill, setSkill] = React.useState(
+  const [selectedSkill, setSelectedSkill] = React.useState(
+    allSkills.find((skill) => skill.name === skillsDropdownNames[0])
+  );
+  const prevSkillSelectedRef = useRef(
     allSkills.find((skill) => skill.name === skillsDropdownNames[0])
   );
   const [
-    isChooseCharacterSkillSuccessfull,
-    setIsChooseCharacterSkillSuccessfull
+    isChooseCharacterSkillSuccessfully,
+    setIsChooseCharacterSkillSuccessfully
   ] = React.useState(false);
   const [computedNumber, setComputedNumber] = React.useState(0);
 
@@ -21,25 +24,29 @@ const SkillsDropDown = ({ skills }) => {
   }, [skills]);
 
   useEffect(() => {
-    const skill = allSkills.find((skill) => skill.name === skill.name);
-    console.log({ skill });
-    setSkill(skill);
+    prevSkillSelectedRef.current = selectedSkill;
+  }, [selectedSkill]);
+
+  useEffect(() => {
+    const skill = allSkills.find(
+      (skill) => skill.name === prevSkillSelectedRef.current.name
+    );
+    setSelectedSkill(skill);
   }, [allSkills]);
 
   const handleRoll = () => {
     const randomNumber = Math.floor(Math.random() * 20) + 1;
     setRandomNumber(randomNumber);
     const doesMeetSelectionCriteria =
-      randomNumber + skill.value >= difficultyChosen;
-    setComputedNumber(randomNumber + skill.value);
-    setIsChooseCharacterSkillSuccessfull(doesMeetSelectionCriteria);
+      randomNumber + selectedSkill.value >= difficultyChosen;
+    setComputedNumber(randomNumber + selectedSkill.value);
+    setIsChooseCharacterSkillSuccessfully(doesMeetSelectionCriteria);
   };
 
   const handleSkillSelection = (e) => {
     const skillName = e.target.value;
     const skill = allSkills.find((skill) => skill.name === skillName);
-    console.log({ skill });
-    setSkill(skill);
+    setSelectedSkill(skill);
   };
 
   const handleDifficultyChosenInputChange = (e) => {
@@ -50,7 +57,16 @@ const SkillsDropDown = ({ skills }) => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        maxWidth: 450,
+        alignItems: 'center',
+        margin: 'auto',
+        gap: 2
+      }}
+    >
       <h1>SkillsDropDown</h1>
       <select onChange={(e) => handleSkillSelection(e)}>
         {skillsDropdownNames.map((skill) => (
@@ -63,19 +79,27 @@ const SkillsDropDown = ({ skills }) => {
         onChange={(e) => handleDifficultyChosenInputChange(e)}
       />
       <button onClick={handleRoll}>Roll</button>
-      {randomNumber}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2
+        }}
+      >
+        <div> Random Number: {randomNumber}</div>
+        {selectedSkill ? (
+          <div>
+            Selected Skill: {selectedSkill.name}, Skill points:{' '}
+            {selectedSkill.value}
+          </div>
+        ) : null}
 
-      {skill ? (
-        <>
-          {skill.name} {skill.value}
-        </>
-      ) : null}
-
-      {isChooseCharacterSkillSuccessfull ? (
-        <>skill check is successful {computedNumber} </>
-      ) : (
-        <>skill check is a failure {computedNumber}</>
-      )}
+        {isChooseCharacterSkillSuccessfully ? (
+          <h3>skill check is successful </h3>
+        ) : (
+          <h3>skill check is a failure </h3>
+        )}
+      </div>
     </div>
   );
 };
